@@ -4,7 +4,7 @@ class Countdown extends Component {
   render() {
     return (
       <div className="Countdown">
-        <p className="Big-number">Three</p>      
+        <p className="Big-number">3</p>      
      </div>
     );
   }

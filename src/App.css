@@ -16,6 +16,42 @@
   font-size: 2em;
 }
 
+.Score {
+  color: darkred;
+  margin-top: 50px;
+  margin-right: 50px;
+  padding: 5px;
+  width: 80px;
+  float: right;
+  border-color: darkred;
+  border: solid;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.Timer {
+  float: left;
+  color: darkred;
+  margin-top: 50px;
+  margin-left: 50px;
+  padding: 5px;
+  width: 80px;
+  border-color: darkred;
+  border: solid;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.Description {
+  color: darkred;
+  font-size: 1em;
+}
+
+.Numeric {
+  font-size: 4em;
+}
+
+
 .Number {
   color: red;
   font-size: 20em;

@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ReactDOM from 'react-dom';
 import Countdown from './Countdown.js';
+import Score from './Score.js';
+import Timer from './Timer.js';
 import Numberbond from './Numberbond.js';
 import StartMessage from './StartMessage.js';
+import EndMessage from './EndMessage.js';
+
+const GameLength = 60
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {screen: "StartMessage"};
+    
+    window.app = this
 
     // This binding is necessary to make `this` work in the callback
-    this.startGame = this.startGame.bind(this);
+    this.renderQuiz = this.renderQuiz.bind(this);
     this.handleSuccess = this.handleSuccess.bind(this);
     this.handleFailure = this.handleFailure.bind(this);
+    this.incrementScore = this.incrementScore.bind(this);
+    this.startQuiz = this.startQuiz.bind(this);
+    this.countDown = this.countDown.bind(this);
+    this.updateNumbers = this.updateNumbers.bind(this);
+    this.flashRed = this.flashRed.bind(this);
+    this.flashGreen = this.flashGreen.bind(this);
+    
+    this.state = { display: 'Start', score: 0, remaining: GameLength, numbers: this.generateNumbers()};
+    
   }
 
   randomInt(max) {
@@ -52,21 +66,34 @@ class App extends Component {
                  {"option": answers[2], "handler": this.handleFailure } ]
     return { "number": number, "answer": answer, "options": this.shuffleArray(data)  } 
   }
+  
+  updateNumbers() {
+    this.setState(
+      { numbers: this.generateNumbers() }
+    )
+  }
 
   
   handleSuccess() {
-    console.log("SUCCESS")
     this.flashGreen()
-    this.startGame()
+    this.incrementScore(1)
+    this.updateNumbers()
   }
   
   handleFailure() {
-    console.log("FAIL")
     this.flashRed()
+    this.incrementScore(-1)
+  }
+  
+  incrementScore(inc) {
+    this.setState({
+      score: this.state.score + inc
+    })
   }
   
   flashGreen() {
-    document.body.style.backgroundColor = "green";
+    document.body.style.backgroundColor = "darkgreen";
+    this.incrementScore(1);
     setTimeout(function(){ document.body.style.backgroundColor = "black"; }, 200 )
   }
   
@@ -74,27 +101,57 @@ class App extends Component {
     document.body.style.backgroundColor = "red";
     setTimeout(function(){ document.body.style.backgroundColor = "black"; }, 200 )
   }
-  startGame() {
+  
+  renderQuiz() {
     
-    var data = this.generateNumbers()
+    var data = this.state.numbers
     
-    ReactDOM.render(
+    return (
+      <div>
+      <Timer remaining={this.state.remaining} />
+      <Score score={this.state.score} />
       <Numberbond numberbond={data["number"]}
           answerA={data["options"][0]["option"]} handlerA={data["options"][0]["handler"]}
           answerB={data["options"][1]["option"]} handlerB={data["options"][1]["handler"]}
-          answerC={data["options"][2]["option"]} handlerC={data["options"][2]["handler"]} />,
-      document.getElementById("root")
+          answerC={data["options"][2]["option"]} handlerC={data["options"][2]["handler"]} />
+      </div>
     )
   }
   
+  startQuiz() {
+    this.setState({ display: 'Quiz', score: 0, remaining: GameLength, numbers: this.generateNumbers() }, this.countDown )
+  }
   
+  countDown() {
+    this.setState( {remaining: this.state.remaining - 1} )
+    if (this.state.remaining >= 0) {
+      setTimeout( function() {
+        this.countDown()
+      }.bind(this), 1000 )
+    } else {
+      this.setState( { display: 'End'}  )
+    }
+  }
   
+  renderStartMessage() {
+    return (
+      <StartMessage onButtonClick={this.startQuiz} />
+    )
+  }
+  
+  renderEnd() {
+    return (
+      <EndMessage score={this.state.score} onButtonClick={this.startQuiz}/>
+    )
+  }
   
   
   render() {
     return (
       <div className="App">
-        <StartMessage onButtonClick={this.startGame} />
+        { this.state.display === 'Start' ? this.renderStartMessage()  : '' }
+        { this.state.display === 'Quiz' ? this.renderQuiz()  : '' }
+        { this.state.display === 'End' ? this.renderEnd() : ''}
      </div>
     );
   }
