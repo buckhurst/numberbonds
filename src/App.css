@@ -84,6 +84,12 @@
   border-radius: 30px;
 }
 
+.StartButton:disabled,
+.StartButton[disabled]{
+  border-color: grey;
+  color: grey;
+}
+
 .Footer {
   
   color: white;

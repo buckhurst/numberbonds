@@ -8,7 +8,7 @@ import Numberbond from './Numberbond.js';
 import StartMessage from './StartMessage.js';
 import EndMessage from './EndMessage.js';
 
-const GameLength = 60
+const GameLength = 60 //s
 
 class App extends Component {
 
@@ -58,9 +58,9 @@ class App extends Component {
   }
   
   generateNumbers() {
-    var number = this.randomInt(20)
+    var number = this.randomInt(19)
     var answer = 20 - number
-    var answers = this.randomIntButNotInArray(20, answer)
+    var answers = this.randomIntButNotInArray(19, answer)
     var data = [ {"option": answers[0], "handler": this.handleSuccess },
                  {"option": answers[1], "handler": this.handleFailure },
                  {"option": answers[2], "handler": this.handleFailure } ]
@@ -140,11 +140,19 @@ class App extends Component {
   }
   
   renderEnd() {
+    setTimeout( function() {
+        this.setState( { display: 'PlayAgain' } )
+      }.bind(this), 2000 )
     return (
-      <EndMessage score={this.state.score} onButtonClick={this.startQuiz}/>
+      <EndMessage score={this.state.score} disabled={true}/>
     )
   }
   
+  renderPlayAgain() {
+    return (
+      <EndMessage score={this.state.score} disabled={false} onButtonClick={this.startQuiz}/>
+    )
+  }
   
   render() {
     return (
@@ -152,6 +160,7 @@ class App extends Component {
         { this.state.display === 'Start' ? this.renderStartMessage()  : '' }
         { this.state.display === 'Quiz' ? this.renderQuiz()  : '' }
         { this.state.display === 'End' ? this.renderEnd() : ''}
+        { this.state.display === 'PlayAgain' ? this.renderPlayAgain() : ''}
      </div>
     );
   }

@@ -14,7 +14,7 @@ class EndMessage extends Component {
         
         <br />
         
-        <button className="StartButton" onClick={this.props.onButtonClick}>
+        <button id="delayedbutton" className="StartButton" disabled={this.props.disabled} onClick={this.props.onButtonClick}>
         PLAY AGAIN
         </button>
         
